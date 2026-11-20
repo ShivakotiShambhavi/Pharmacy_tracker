@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Suppliers{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between mb-3"><h3 class="page-title">Suppliers</h3>
+<a href="{{ url_for('supplier_form') }}" class="btn btn-primary">+ Add Supplier</a></div>
+<div class="card shadow-sm"><div class="table-responsive"><table class="table table-hover mb-0">
+<thead><tr><th>Name</th><th>Contact</th><th>Phone</th><th>Email</th><th>Address</th><th>Purchases</th><th>Total Spent</th><th></th></tr></thead>
+<tbody>{% for s in rows %}
+<tr><td>{{ s.name }}</td><td>{{ s.contact_person }}</td><td>{{ s.phone }}</td><td>{{ s.email }}</td><td>{{ s.address }}</td>
+<td>{{ s.purchases }}</td><td>₹{{ '%.2f'|format(s.total) }}</td>
+<td class="text-nowrap"><a class="btn btn-sm btn-outline-primary" href="{{ url_for('supplier_form', sid=s.id) }}">Edit</a>
+<form method="post" action="{{ url_for('supplier_delete', sid=s.id) }}" class="d-inline" onsubmit="return confirm('Delete supplier?')">
+<button class="btn btn-sm btn-outline-danger">Delete</button></form></td></tr>
+{% endfor %}</tbody></table></div></div>
+{% endblock %}

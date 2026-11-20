@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Alerts{% endblock %}
+{% block content %}
+<h3 class="page-title mb-3">Alerts</h3>
+<div class="row g-4">
+  <div class="col-lg-4"><div class="card border-warning shadow-sm"><div class="card-header bg-warning fw-bold">📉 Low Stock ({{ low|length }})</div>
+    <ul class="list-group list-group-flush">{% for m in low %}
+      <li class="list-group-item d-flex justify-content-between"><span>{{ m.name }}</span>
+      <span><b>{{ m.usable_qty }}</b> / {{ m.reorder_level }} <span class="badge bg-{{ 'danger' if m.usable_qty == 0 else 'warning text-dark' }}">{{ m.status }}</span></span></li>
+    {% else %}<li class="list-group-item text-muted">No low-stock items</li>{% endfor %}</ul></div></div>
+  <div class="col-lg-4"><div class="card border-warning shadow-sm"><div class="card-header fw-bold" style="background:#fd7e14;color:#fff">⏳ Near Expiry ({{ near|length }}) — within {{ NEAR_DAYS }} days</div>
+    <ul class="list-group list-group-flush">{% for b in near %}
+      <li class="list-group-item d-flex justify-content-between"><span>{{ b.medicine }}<br><small class="text-muted">Batch {{ b.batch_no }} · qty {{ b.quantity }}</small></span>
+      <span class="text-end">{{ b.expiry_date }}<br><span class="badge bg-{{ 'danger' if b.days_left <= 30 else 'warning text-dark' }}">{{ b.days_left }} days left</span></span></li>
+    {% else %}<li class="list-group-item text-muted">No near-expiry batches</li>{% endfor %}</ul></div></div>
+  <div class="col-lg-4"><div class="card border-danger shadow-sm"><div class="card-header bg-danger text-white fw-bold">⛔ Expired ({{ expired|length }})</div>
+    <ul class="list-group list-group-flush">{% for b in expired %}
+      <li class="list-group-item d-flex justify-content-between"><span>{{ b.medicine }}<br><small class="text-muted">Batch {{ b.batch_no }} · qty {{ b.quantity }}</small></span>
+      <span>{{ b.expiry_date }}</span></li>
+    {% else %}<li class="list-group-item text-muted">No expired stock</li>{% endfor %}</ul>
+    {% if expired %}<div class="card-footer"><a href="{{ url_for('writeoff') }}" class="btn btn-sm btn-danger">Write off expired stock</a></div>{% endif %}</div></div>
+</div>
+{% endblock %}

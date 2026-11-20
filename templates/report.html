@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h3 class="page-title mb-0">{{ title }}</h3>
+  <div class="no-print">
+    <a class="btn btn-outline-success btn-sm" href="{{ request.full_path.rstrip('?') }}{{ '&' if request.args else '?' }}export=csv">⬇ Export CSV</a>
+    <button class="btn btn-outline-secondary btn-sm" onclick="window.print()">🖨 Print</button>
+    <a class="btn btn-outline-primary btn-sm" href="{{ url_for('reports') }}">Back</a>
+  </div>
+</div>
+<p class="text-muted">Generated on {{ today }}</p>
+{% if supplier_filter %}
+<form method="get" class="row g-2 mb-3 no-print">
+  <div class="col-md-3"><select name="supplier_id" class="form-select"><option value="">All suppliers</option>
+    {% for s in suppliers %}<option value="{{ s.id }}" {{ 'selected' if sel.supplier_id|string == s.id|string }}>{{ s.name }}</option>{% endfor %}</select></div>
+  <div class="col-md-2"><input type="date" name="start" value="{{ sel.start }}" class="form-control"></div>
+  <div class="col-md-2"><input type="date" name="end" value="{{ sel.end }}" class="form-control"></div>
+  <div class="col-auto"><button class="btn btn-primary">Filter</button></div>
+</form>
+{% endif %}
+<div class="card shadow-sm"><div class="table-responsive"><table class="table table-bordered mb-0">
+<thead><tr>{% for key, label in columns %}<th>{{ label }}</th>{% endfor %}</tr></thead>
+<tbody>{% for r in rows %}<tr class="{{ r['_cls'] if r['_cls'] is defined else '' }}">
+  {% for key, label in columns %}<td>{{ r[key] if r[key] is not none else '' }}</td>{% endfor %}</tr>
+{% else %}<tr><td colspan="{{ columns|length }}" class="text-center text-muted">No records found</td></tr>{% endfor %}</tbody></table></div></div>
+<p class="mt-2 text-muted">{{ rows|length }} record(s). <b>{{ footer }}</b></p>
+{% endblock %}

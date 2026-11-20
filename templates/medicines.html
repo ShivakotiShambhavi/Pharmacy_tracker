@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Medicines{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h3 class="page-title">Medicine Catalog</h3>
+  {% if g.user.role in (ADMIN, MANAGER) %}<a href="{{ url_for('medicine_form') }}" class="btn btn-primary">+ Add Medicine</a>{% endif %}
+</div>
+<form class="row g-2 mb-3" method="get">
+  <div class="col-md-4"><input name="q" value="{{ term }}" class="form-control" placeholder="Search name, generic name or category"></div>
+  <div class="col-auto"><button class="btn btn-outline-primary">Search</button></div>
+</form>
+<div class="card shadow-sm"><div class="table-responsive"><table class="table table-hover mb-0">
+<thead><tr><th>Name</th><th>Generic</th><th>Category</th><th>Unit</th><th>Price</th><th>Usable Qty</th><th>Reorder</th><th>Status</th><th></th></tr></thead>
+<tbody>{% for m in rows %}
+<tr><td>{{ m.name }}</td><td>{{ m.generic_name }}</td><td>{{ m.category }}</td><td>{{ m.unit }}</td><td>₹{{ m.price }}</td>
+<td>{{ m.usable_qty }}</td><td>{{ m.reorder_level }}</td>
+<td><span class="badge bg-{{ {'In Stock':'success','Low Stock':'warning text-dark','Out of Stock':'danger'}[m.status] }}">{{ m.status }}</span></td>
+<td class="text-nowrap">
+  <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('medicine_batches', mid=m.id) }}">Batches</a>
+  {% if g.user.role in (ADMIN, MANAGER) %}
+  <a class="btn btn-sm btn-outline-primary" href="{{ url_for('medicine_form', mid=m.id) }}">Edit</a>
+  <form method="post" action="{{ url_for('medicine_delete', mid=m.id) }}" class="d-inline" onsubmit="return confirm('Delete this medicine?')">
+    <button class="btn btn-sm btn-outline-danger">Delete</button></form>
+  {% endif %}</td></tr>
+{% else %}<tr><td colspan="9" class="text-center text-muted">No medicines found</td></tr>{% endfor %}</tbody>
+</table></div></div>
+{% endblock %}

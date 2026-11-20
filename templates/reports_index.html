@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Reports{% endblock %}
+{% block content %}
+<h3 class="page-title mb-3">Reports</h3>
+<div class="row g-3">
+  {% for title, desc, ep, icon in [
+    ('Current Stock Report','Usable/expired quantity, value and status per medicine','report_current','📦'),
+    ('Expired Medicine Report','Expired batches with remaining stock and potential loss','report_expired','⛔'),
+    ('Near-Expiry Report','Batches expiring soon, sorted by urgency','report_near','⏳'),
+    ('Supplier Purchase Report','Purchases by supplier and date range','report_supplier','🚚')] %}
+  {% if ep != 'report_supplier' or g.user.role in (ADMIN, MANAGER) %}
+  <div class="col-md-6 col-lg-3"><a href="{{ url_for(ep) }}" class="text-decoration-none">
+    <div class="card card-stat h-100 p-3"><h5>{{ icon }} {{ title }}</h5><p class="text-muted mb-0">{{ desc }}</p></div></a></div>
+  {% endif %}{% endfor %}
+</div>
+{% endblock %}

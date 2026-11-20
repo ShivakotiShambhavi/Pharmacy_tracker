@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Stock Ledger{% endblock %}
+{% block content %}
+<h3 class="page-title mb-3">Stock Ledger (Inward / Outward)</h3>
+<div class="mb-3 btn-group">
+  {% for label, val in [('All',''),('Inward','IN'),('Outward','OUT'),('Expired','EXPIRED'),('Damaged','DAMAGED')] %}
+  <a href="{{ url_for('transactions', type=val) }}" class="btn btn-outline-primary btn-sm {{ 'active' if ttype == val }}">{{ label }}</a>{% endfor %}
+</div>
+<div class="card shadow-sm"><div class="table-responsive"><table class="table table-sm table-hover mb-0">
+<thead><tr><th>#</th><th>Date</th><th>Medicine</th><th>Batch</th><th>Type</th><th>Qty</th><th>By</th><th>Note</th></tr></thead>
+<tbody>{% for t in rows %}<tr><td>{{ t.id }}</td><td>{{ t.txn_date }}</td><td>{{ t.medicine }}</td><td>{{ t.batch_no }}</td>
+<td>{% include "_type_badge.html" %}</td><td>{{ t.quantity }}</td><td>{{ t.user }}</td><td>{{ t.note }}</td></tr>
+{% else %}<tr><td colspan="8" class="text-center text-muted">No transactions</td></tr>{% endfor %}</tbody></table></div></div>
+{% endblock %}

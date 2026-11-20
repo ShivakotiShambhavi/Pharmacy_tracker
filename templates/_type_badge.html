@@ -1,0 +1,2 @@
+{% set c = {'IN':'success','OUT':'primary','EXPIRED':'danger','DAMAGED':'warning text-dark'}[t.txn_type] %}
+<span class="badge bg-{{ c }}">{{ t.txn_type }}</span>

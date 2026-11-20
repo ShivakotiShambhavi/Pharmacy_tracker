@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h3 class="page-title mb-3">Dashboard</h3>
+<div class="row g-3 mb-4">
+  <div class="col-md-2"><div class="card card-stat p-3"><small>Medicines</small><h3>{{ stats.medicines }}</h3></div></div>
+  <div class="col-md-2"><div class="card card-stat p-3"><small>Usable Units</small><h3>{{ stats.units }}</h3></div></div>
+  <div class="col-md-2"><a href="{{ url_for('alerts') }}" class="text-decoration-none text-dark"><div class="card card-stat p-3" style="border-left-color:#ffc107"><small>Low / Out of Stock</small><h3>{{ stats.low }}</h3></div></a></div>
+  <div class="col-md-2"><a href="{{ url_for('report_near') }}" class="text-decoration-none text-dark"><div class="card card-stat p-3" style="border-left-color:#fd7e14"><small>Near-Expiry Batches</small><h3>{{ stats.near }}</h3></div></a></div>
+  <div class="col-md-2"><a href="{{ url_for('report_expired') }}" class="text-decoration-none text-dark"><div class="card card-stat p-3" style="border-left-color:#dc3545"><small>Expired Batches</small><h3>{{ stats.expired }}</h3></div></a></div>
+  <div class="col-md-2"><div class="card card-stat p-3" style="border-left-color:#198754"><small>Stock Value</small><h3>₹{{ '%.0f'|format(stats.value) }}</h3></div></div>
+</div>
+{% if stats.low or stats.near or stats.expired %}
+<div class="alert alert-warning">⚠️ Attention needed: {{ stats.low }} low-stock item(s), {{ stats.near }} near-expiry batch(es), {{ stats.expired }} expired batch(es) with stock remaining.
+  <a href="{{ url_for('alerts') }}" class="alert-link">View alerts</a></div>
+{% endif %}
+<div class="card shadow-sm"><div class="card-header fw-bold">Recent Stock Activity</div>
+<div class="table-responsive"><table class="table table-sm mb-0">
+  <thead><tr><th>Date</th><th>Medicine</th><th>Batch</th><th>Type</th><th>Qty</th><th>By</th><th>Note</th></tr></thead>
+  <tbody>{% for t in recent %}
+    <tr><td>{{ t.txn_date }}</td><td>{{ t.medicine }}</td><td>{{ t.batch_no }}</td>
+    <td>{% include "_type_badge.html" %}</td><td>{{ t.quantity }}</td><td>{{ t.user }}</td><td>{{ t.note }}</td></tr>
+  {% else %}<tr><td colspan="7" class="text-center text-muted">No activity yet</td></tr>{% endfor %}</tbody>
+</table></div></div>
+{% endblock %}

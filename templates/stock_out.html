@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Dispense{% endblock %}
+{% block content %}
+<h3 class="page-title mb-3">Dispense Medicine (Stock Outward)</h3>
+<form method="post" class="card shadow-sm p-4" style="max-width:700px">
+  <p class="text-muted small">Stock is deducted automatically from the batch with the <b>earliest expiry first (FEFO)</b>. Expired batches are never dispensed.</p>
+  <div class="mb-3"><label class="form-label">Medicine *</label>
+    <select name="medicine_id" class="form-select" required><option value="">-- select --</option>
+    {% for m in meds %}<option value="{{ m.id }}">{{ m.name }} (available: {{ m.usable_qty }} {{ m.unit }})</option>{% endfor %}</select></div>
+  <div class="mb-3"><label class="form-label">Quantity *</label><input type="number" min="1" name="quantity" class="form-control" required></div>
+  <div class="mb-3"><label class="form-label">Patient / Prescription Reference</label><input name="note" class="form-control"></div>
+  <button class="btn btn-primary">Dispense</button>
+</form>
+{% endblock %}

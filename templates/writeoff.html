@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Expired / Damaged{% endblock %}
+{% block content %}
+<h3 class="page-title mb-3">Record Expired / Damaged Stock</h3>
+<div class="row g-4">
+  <div class="col-lg-5">
+    <form method="post" class="card shadow-sm p-4">
+      <div class="mb-3"><label class="form-label">Batch *</label>
+        <select name="batch_id" class="form-select" required><option value="">-- select --</option>
+        {% for b in batches %}<option value="{{ b.id }}">{{ b.medicine }} | {{ b.batch_no }} | exp {{ b.expiry_date }} | qty {{ b.quantity }}</option>{% endfor %}</select></div>
+      <div class="mb-3"><label class="form-label">Reason *</label>
+        <select name="reason" class="form-select"><option value="DAMAGED">Damaged</option><option value="EXPIRED">Expired</option></select></div>
+      <div class="mb-3"><label class="form-label">Quantity (blank = whole batch)</label><input type="number" min="1" name="quantity" class="form-control"></div>
+      <div class="mb-3"><label class="form-label">Note</label><input name="note" class="form-control"></div>
+      <button class="btn btn-danger">Record Write-off</button>
+    </form>
+  </div>
+  <div class="col-lg-7">
+    <div class="card shadow-sm mb-4"><div class="card-header fw-bold text-danger">Expired batches still holding stock</div>
+    <table class="table table-sm mb-0"><thead><tr><th>Medicine</th><th>Batch</th><th>Expired</th><th>Qty</th><th></th></tr></thead><tbody>
+    {% for b in expired %}<tr><td>{{ b.medicine }}</td><td>{{ b.batch_no }}</td><td>{{ b.expiry_date }}</td><td>{{ b.quantity }}</td>
+      <td><form method="post"><input type="hidden" name="batch_id" value="{{ b.id }}"><input type="hidden" name="reason" value="EXPIRED">
+      <input type="hidden" name="note" value="Expired stock removed"><button class="btn btn-sm btn-outline-danger">Write off all</button></form></td></tr>
+    {% else %}<tr><td colspan="5" class="text-center text-muted">None 🎉</td></tr>{% endfor %}</tbody></table></div>
+    <div class="card shadow-sm"><div class="card-header fw-bold">Recent write-offs</div>
+    <table class="table table-sm mb-0"><thead><tr><th>Date</th><th>Medicine</th><th>Batch</th><th>Type</th><th>Qty</th><th>By</th></tr></thead><tbody>
+    {% for t in history %}<tr><td>{{ t.txn_date }}</td><td>{{ t.medicine }}</td><td>{{ t.batch_no }}</td><td>{% include "_type_badge.html" %}</td><td>{{ t.quantity }}</td><td>{{ t.user }}</td></tr>
+    {% else %}<tr><td colspan="6" class="text-center text-muted">No records</td></tr>{% endfor %}</tbody></table></div>
+  </div>
+</div>
+{% endblock %}
